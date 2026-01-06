@@ -1,32 +1,29 @@
-# apply.yaml для вашего Telegram бота
 apiVersion: apply.build/v1alpha1
 kind: Service
 
 metadata:
-  name: telegram-image-bot # Имя вашего сервиса на Apply.Build
+  name: telegram-image-bot
 
 spec:
   build:
-    src: . # Исходники находятся в корне репозитория
+    src: .
     env:
-      # Здесь можно указать версию Python, если Apply.Build это поддерживает
-      # Обычно это делается через Dockerfile или прямое указание в build.commands
-      # Проверим, какой Python установлен по умолчанию, и если нужно, установим конкретный
-      # Например, можно добавить 'PYTHON_VERSION: "3.11"' если Apply.Build это умеет
-  
-  commands:
-    build: # Команды, выполняемые во время сборки
-      - pip install -r requirements.txt # Устанавливаем зависимости
-    start: # Команда, выполняемая для запуска сервиса
-      - python main.py # Запускаем ваш бот
+      # Можно попробовать указать версию Python здесь, если Apply.Build/Nixpacks это поддерживает.
+      # Например, 'NIXPACKS_PYTHON_VERSION': "3.11"
+      # Или же NIXPACKS_BUILD_CMD/NIXPACKS_START_CMD, но лучше использовать структуру YAML.
+    commands:
+      # Команды сборки:
+      build:
+        - pip install -r requirements.txt # Устанавливаем зависимости
+
+      # Команда запуска: ***ЭТО ИЗМЕНЕНИЕ***
+      start:
+        - python main.py # Запускаем ваш бот
 
   resources:
-    cpu: 1 # 1 ядро CPU (обычно достаточно)
-    memory: 512Mi # 512 Мегабайт RAM (минимально для Python бота)
+    cpu: 1
+    memory: 512Mi
 
   secrets:
-    # Здесь вы указываете секреты, которые будут доступны как переменные окружения
-    # Apply.Build будет искать эти переменные в настройках вашего проекта/приложения
-    # Не указывайте здесь сами значения, только имена ключей, которые хотите получить
     - key: TELEGRAM_BOT_TOKEN
     - key: MODEL_SCOPE_API_KEY
